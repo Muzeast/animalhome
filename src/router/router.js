@@ -49,8 +49,8 @@ export const routes = [
               {
                 path: 'myPublish',
                 name: 'myPublish',
-                meta: {title: '我的发布'},
-                component: () => import('@/components/plugins/table')
+                meta: {title: '我的申请'},
+                component: () => import('@/components/user/MyPublish')
               },
               {
                 path: 'myAdoption',

@@ -18,14 +18,14 @@
 export default {
 	data () {
 		return {
-			menuList: [],
+			menuList: this.$route.params.menuList,
 		}
 	},
 	methods: {
 		//
 	},
 	mounted () {
-		this.menuList = this.$route.params.menuList
+		console.log('menuList---->', this.$route.params.menuList)
 	}
 }
 </script>

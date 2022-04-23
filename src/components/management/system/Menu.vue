@@ -55,7 +55,7 @@
 				</Col>
 			</Row>
 			<Input class="my-input" v-model="menuInfo.order">
-				<span slot="prepend">&nbsp;&nbsp;序号</span></span>
+				<span slot="prepend">&nbsp;&nbsp;序号</span>
 			</Input>
 			<div slot="footer">
 				<Button @click="cancle">取消</Button>

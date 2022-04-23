@@ -40,13 +40,10 @@
                 <Breadcrumb class="layout-breadc">
                     <BreadcrumbItem v-for="(item, index) in breadList.breadList" :key="index">{{item}}</BreadcrumbItem>
                 </Breadcrumb>
-                <div style="min-height: 400px; clear:both">
+                <div style="min-height: 600px; clear:both">
                     <router-view @updateUserInfo="getBriefUserInfo"/>
                 </div>
             </div>
-            <!-- <div class="page_footer">
-                <span>2018-2022 &copy; AnimalHome</span>
-            </div> -->
             <Modal v-model="status_exit" title="注销登陆" @on-ok="exit">
                 <span>确认退出登陆?</span>
             </Modal>
@@ -174,11 +171,11 @@ export default {
       }
   },
   beforeMount () {
-    $('html').css('height', '100%')
-    $('body').css({'height': '100%'})
+    //$('html').css('height', '100%')
+    //$('body').css({'height': '100%'})
   },
   mounted () {
-      this.pageHeight.height = $('body').css('height')
+      //this.pageHeight.height = $('body').css('height')
       this.getBriefUserInfo()
   }
 }
@@ -191,7 +188,7 @@ export default {
     border-radius: 4px;
 }
 .page_header {
-    height: 10%;
+    min-height: 60px !important;
     background: #515A6E;
     padding: 0 10px;
 }
@@ -199,9 +196,6 @@ export default {
     /*height: 85%;*/
     padding: 0 20px;
     overflow: scroll;
-}
-.page_footer {
-    height: 5%;
 }
 .header-logo{
     width: 10%;

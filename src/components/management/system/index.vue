@@ -27,7 +27,7 @@ export default {
 		//
 	},
 	mounted () {
-		console.log('menuList---->', this.$route.params.menuList)
+		//console.log('menuList---->', this.$route.params.menuList)
 	}
 }
 </script>

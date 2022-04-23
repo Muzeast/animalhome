@@ -40,6 +40,14 @@
 				</Row>
 				<Row class="trow">
 					<Col span="6" class="col-title">
+						<span>邮箱</span>
+					</Col>
+					<Col span="18">
+						<Input v-model="userInfo.email"/>
+					</Col>
+				</Row>
+				<Row class="trow">
+					<Col span="6" class="col-title">
 						<span>密码</span>
 					</Col>
 					<Col span="18">
@@ -80,6 +88,7 @@ export default {
 				nickName: '',
 				gender: 'M',
 				birthDay: '',
+				email: '',
 				password: '',
 			},
 			repassword: ''
@@ -93,7 +102,7 @@ export default {
 			if(!this.validUserInfo()) {
 				return
 			}
-			console.log('user---->', this.userInfo)
+			//console.log('user---->', this.userInfo)
 			let password = this.userInfo.password;
 			this.userInfo.password = md5(this.userInfo.password)
 			axios.request({
@@ -101,7 +110,18 @@ export default {
 				method: 'post',
 				data: this.userInfo
 			}).then(res => {
-				//
+				if (res.data && res.data.code == 200) {
+					this.$Notice.info({
+						title: '提示',
+						desc: '注册成功, 3S后跳转至登录页',
+						duration: 3
+					})
+					setTimeout(() => {
+						this.$router.push({
+							name: 'login'
+						})
+					}, 3000)
+				}
 			})
 		},
 		validUserInfo () {
@@ -133,7 +153,6 @@ export default {
 	},
 	mounted () {
 		this.styles.mainarea.height = $('body').css('height')
-		//console.log('---->', this.mainStyles)
 	}
 }
 </script>
@@ -151,7 +170,7 @@ export default {
 }
 .form-area {
 	width: 100%;
-	height: 70%;
+	height: 80%;
 	position: relative;
 	top: 15%;
 	background: #E9EBEC;

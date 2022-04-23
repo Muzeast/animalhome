@@ -1,14 +1,14 @@
 <template>
 	<Layout>
 		<Sider style="background: #F1F3F4; z-index: 0;">
-			<Menu active-name="1">
+			<Menu active-name="1" width="auto">
 				<MenuItem name="1" to="userInfo">
 					<Icon type="md-stats"/>
                     用户信息
 				</MenuItem>
-				<MenuItem name="2">
+				<MenuItem name="2" to="myPublish">
 					<Icon type="md-stats"/>
-                    我的发布
+                    我的申请
 				</MenuItem>
 				<MenuItem name="3">
 					<Icon type="md-stats"/>

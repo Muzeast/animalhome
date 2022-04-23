@@ -22,7 +22,6 @@ export default {
 .capp {
   background: url('./assets/BingWallpaper.png');
   width: 100%;
-  height: 100%;
   position: fixed;
   background-size: 100% 100%;
 }

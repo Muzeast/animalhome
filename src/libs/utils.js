@@ -76,3 +76,10 @@ export const generateUserTreeData = (allData, userInfo) => {
 
 	return [res]
 }
+
+export const uuid = () => {
+	var temp_url = URL.createObjectURL(new Blob());
+	var uuid = temp_url.toString(); // blob
+	URL.revokeObjectURL(temp_url);
+	return uuid.substring(uuid.lastIndexOf("/") + 1);
+}

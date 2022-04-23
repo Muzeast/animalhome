@@ -1,5 +1,5 @@
 <template>
-	<div style="width: 50%;position: relative; left: 25%;">
+	<div style="width: 50%;position: relative; left: 10%;">
 		<List border split>
 			<div slot="header">
 				<img class="avatar" :src="avatarImg"/><br>
@@ -33,23 +33,23 @@
 			</ListItem>
 			<ListItem>
 				<div class="list-item">
-					<span class="item-title">电话号码: </span>
-					<span style="margin-left: 20px">{{userInfo.telephone == null ? '未填写' : userInfo.telephone}}</span>
+					<span class="item-title">邮箱: </span>
+					<span style="margin-left: 20px">{{userInfo.email == null ? '未填写' : userInfo.email}}</span>
 				</div>
 			</ListItem>
 			<ListItem>
 				<div class="list-item">
 					<span class="item-title">实名认证: </span>
-					<span style="margin-left: 20px">{{userInfo.ifAuthentic == 1 ? '已认证' : '未认证'}}</span>
-					<span v-if="userInfo.ifAuthentic == 1" class="link" style="margin-left: 20px">查看实名信息</span>
-					<span v-else class="link" style="margin-left: 20px" @click="authentic">去认证</span>
+					<span style="margin-left: 20px">{{authenticName}}</span>
+					<span v-if="userInfo.authenticStatus == 0" class="link" style="margin-left: 20px" @click="authentic">去认证</span>
+					<span v-else class="link" style="margin-left: 20px" @click="getAuthenticApply">查看</span>
 				</div>
 			</ListItem>
 			<div slot="footer">
 				<Button type="info" @click="alterUserInfo">修改信息</Button>
 			</div>
 		</List>
-		<Modal v-model="modal_switch">
+		<Modal v-model="modal_switch" @on-visible-change="modalVisiableChange">
 			<div v-if="modal_content_type == 1" align="center">
 				<Upload action="/api/file/uploadAvatar.json"
 					:headers="headerInfo"
@@ -60,7 +60,11 @@
 				</Upload>
 			</div>
 			<div v-else-if="modal_content_type == 2">
-				<Input placeholder="真实姓名"/>
+				<AuthenticTable ref="applyTable"
+					v-if="modal_switch"
+					:onlyShow="onlyShow"
+					:applyInfo="authenticApplyInfo"
+					@submited="modal_switch = false"/>
 			</div>
 			<div v-else-if="modal_content_type == 3">
 				<Input v-model="userInfo.count" type="text">
@@ -71,7 +75,7 @@
 					<span class="item-title2" slot="prepend">昵称</span>
 				</Input>
 				<br/>
-				<Input v-model="userInfo.telephone" type="text">
+				<Input v-model="userInfo.email" type="text">
 					<span class="item-title2" slot="prepend">电话号码</span>
 				</Input>
 			</div>
@@ -82,22 +86,43 @@
 <script>
 import axios from '@/libs/request'
 import {getToken} from '@/libs/utils'
+import AuthenticTable from './AuthenticTable'
 
 export default {
 	name: 'UserInfo',
+	components: {AuthenticTable},
 	data () {
 		return {
 			apiURL: {
+				authenApplyInfoURL: '/user/getAuthenticApply.json',
 				userInfoURL: '/user/userInformation.json',
-				avatarURL: '/file/downloadAvatar.json'
+				avatarURL: '/file/downloadAvatar.json',
+				submitURL: '/user/getAuthenticApply.json'
 			},
+			headerInfo: {
+				tokenauthorization: getToken() //设置请求Token
+			},
+			authenticApplyInfo: {
+				realName: '',
+				idNumber: '',
+				address: '',
+				contact: '',
+				idPhotoFront: '',
+				idPhotoRear: '',
+				personalPhoto: ''
+			},
+			authenticStatus:[
+				{name: '未认证', code: 0},
+				{name: '已认证', code: 1},
+				{name: '未审核', code: 2},
+				{name: '未通过', code: 3}
+			],
 			userInfo: '',
+			onlyShow: false,
+			authenticName: '',
 			avatarImg: '',
 			modal_switch: false,
 			modal_content_type: 0,
-			headerInfo: {
-				tokenauthorization: getToken() //设置请求Token
-			}
 		}
 	},
 	methods: {
@@ -108,6 +133,7 @@ export default {
 			}).then(res => {
 				if (res.data && res.data.code == 200) {
 					this.userInfo = res.data.result
+					this.getAuthenticName(this.userInfo.authenticStatus)
 				}
 			})
 		},
@@ -125,9 +151,29 @@ export default {
 			this.modal_switch = true
 			this.modal_content_type = 1
 		},
+		getAuthenticName (code) {
+			this.authenticStatus.forEach(item => {
+				if (item.code == code) {
+					this.authenticName =  item.name
+				}
+			})
+		},
 		authentic () {
 			this.modal_switch = true
 			this.modal_content_type = 2
+		},
+		getAuthenticApply () {
+			axios.request({
+				url: this.apiURL.authenApplyInfoURL,
+				method: 'get'
+			}).then(res => {
+				if (res.data && res.data.code == 200) {
+					this.authenticApplyInfo = res.data.result
+					this.modal_content_type = 2
+					this.onlyShow = true
+					this.modal_switch = true
+				}
+			})
 		},
 		errorFormat (file) {
 			this.$Notice.warning({
@@ -142,10 +188,12 @@ export default {
 		alterUserInfo () {
 			this.modal_content_type = 3
 			this.modal_switch = true
+		},
+		modalVisiableChange (flag) {
+			if(!flag && this.modal_content_type == 2) {
+				this.$refs.applyTable.cancelSubmit()
+			}
 		}
-	},
-	computed: {
-		//
 	},
 	mounted () {
 		this.getUserInfo()
